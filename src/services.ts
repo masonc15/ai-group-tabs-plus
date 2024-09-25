@@ -109,13 +109,13 @@ export const validateApiKey = async (
       }
     } else if (serviceProvider === "Anthropic") {
       try {
-        const anthropic = new Anthropic({
+        const client = new Anthropic({
           apiKey: apiKey,
         });
-        await anthropic.messages.create({
-          model: "claude-3-sonnet-20240229",
-          max_tokens: 1,
+        await client.messages.create({
+          max_tokens: 1024,
           messages: [{ role: "user", content: "ping" }],
+          model: "claude-3-5-sonnet-20240620",
         });
         toast.success("Valid Anthropic Key");
         return true;
