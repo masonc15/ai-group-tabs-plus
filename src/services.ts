@@ -2,6 +2,7 @@ import { getStorage, matchesRule } from "./utils";
 import { FilterRuleItem, ServiceProvider, TabInfo } from "./types";
 import { fetchType } from "./service-provider";
 import { toast } from "./components/toast";
+import Anthropic from '@anthropic-ai/sdk';
 
 interface TabGroup {
   type: string;
@@ -106,6 +107,26 @@ export const validateApiKey = async (
         toast.error("Invalid Gemini Key: " + response.status + " " + txt);
         return false;
       }
+    } else if (serviceProvider === "Anthropic") {
+      const anthropic = new Anthropic({
+        apiKey: apiKey,
+      });
+      try {
+        await anthropic.messages.create({
+          model: "claude-3-5-sonnet-20240620",
+          max_tokens: 1,
+          messages: [{ role: "user", content: "ping" }],
+        });
+        toast.success("Valid Anthropic Key");
+        return true;
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error("Invalid Anthropic Key: " + error.message);
+        } else {
+          toast.error("Invalid Anthropic Key");
+        }
+        return false;
+      }
     } else {
       const apiURL =
         (await getStorage("apiURL")) ||
@@ -147,9 +168,9 @@ export const validateApiKey = async (
   } catch (error) {
     console.error(error);
     if (error instanceof Error) {
-      toast.error("Invalid OpenAI Key: " + error.message);
+      toast.error("Invalid API Key: " + error.message);
     } else {
-      toast.error("Invalid OpenAI Key");
+      toast.error("Invalid API Key");
     }
     return false;
   }
