@@ -77,19 +77,25 @@ export const validateApiKey = async (
   try {
     if (serviceProvider === "Gemini") {
       const response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta3/models/text-bison-001:generateText?key=" +
-          apiKey,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-exp-0827:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            prompt: { text: "This is a test" },
+            contents: [{ parts: [{ text: "This is a test" }] }],
+            generationConfig: {
+              temperature: 1,
+              topK: 64,
+              topP: 0.95,
+              maxOutputTokens: 8192,
+            },
           }),
         }
       );
       if (response.ok) {
+        toast.success("Valid Gemini Key");
         return true;
       } else {
         const txt = await response.text();
