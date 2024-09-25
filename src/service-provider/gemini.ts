@@ -46,7 +46,7 @@ export const fetchGemini = async (
   types: string[]
 ): Promise<string> => {
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-exp-0827:generateContent?key=${apiKey}`,
     {
       method: "POST",
       headers: {
@@ -54,6 +54,12 @@ export const fetchGemini = async (
       },
       body: JSON.stringify({
         contents: await renderPromptForGemini(tabInfo, types),
+        generationConfig: {
+          temperature: 1,
+          topK: 64,
+          topP: 0.95,
+          maxOutputTokens: 8192,
+        },
       }),
     }
   );
