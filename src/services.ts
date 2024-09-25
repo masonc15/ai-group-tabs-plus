@@ -1,6 +1,6 @@
 import { getStorage, matchesRule } from "./utils";
 import { FilterRuleItem, ServiceProvider, TabInfo } from "./types";
-import { fetchType } from "./service-provider";
+import { fetchTypes } from "./service-provider";
 import { toast } from "./components/toast";
 import { Anthropic } from '@anthropic-ai/sdk';
 
@@ -43,15 +43,14 @@ export async function batchGroupTabs(
   const serviceProvider = await getStorage<ServiceProvider>("serviceProvider") || "GPT";
   const actualApiKey = serviceProvider === "Gemini" ? await getStorage<string>("gemini_key") : apiKey;
 
-  await Promise.all(
-    tabInfoList.map(async (tabInfo) => {
-      if (!tabInfo.url) return;
-      const type = await fetchType(actualApiKey, tabInfo, types, serviceProvider);
-      const index = types.indexOf(type);
-      if (index === -1) return;
-      result[index].tabIds.push(tabInfo.id);
-    })
-  );
+  const tabTypes = await fetchTypes(actualApiKey, tabInfoList, types, serviceProvider);
+  tabTypes.forEach((type, index) => {
+    const tabInfo = tabInfoList[index];
+    const typeIndex = types.indexOf(type);
+    if (typeIndex !== -1 && tabInfo.id) {
+      result[typeIndex].tabIds.push(tabInfo.id);
+    }
+  });
   return result;
 }
 
