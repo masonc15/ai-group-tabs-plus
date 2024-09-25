@@ -15,6 +15,7 @@ export const fetchAnthropic = async (
   const tabData = tabInfoList.map((tab, index) => ({
     index: index + 1,
     url: removeQueryParameters(tab.url),
+    title: tab.title,
   }));
 
   const response = await anthropic.messages.create({

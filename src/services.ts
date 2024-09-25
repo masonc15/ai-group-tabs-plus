@@ -25,13 +25,11 @@ export async function batchGroupTabs(
 ) {
   const filterRules = (await getStorage<FilterRuleItem[]>("filterRules")) || [];
   const tabInfoList: TabInfo[] = tabs
-    .map((tab) => {
-      return {
-        id: tab.id,
-        title: tab.title,
-        url: tab.url,
-      };
-    })
+    .map((tab) => ({
+      id: tab.id,
+      title: tab.title || "",
+      url: tab.url,
+    }))
     .filter((tab) => filterTabInfo(tab, filterRules));
 
   const result: TabGroup[] = types.map((type) => {
