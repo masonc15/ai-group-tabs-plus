@@ -1,5 +1,7 @@
 # AI Group Tabs
 
+NOTE: This is a fork with added Gemini and Anthropic API capability. Default model for Gemini is `gemini-1.5-pro-exp-0827` and default model for Anthropic is `claude-3-5-sonnet-20240620`.
+
 ![Frame 7](https://github.com/MichaelYuhe/ai-group-tabs/assets/63531512/fef62a35-8193-4ef1-8082-cfc771d0b4e6)
 
 Demo Video:
