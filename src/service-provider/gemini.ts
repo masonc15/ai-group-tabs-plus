@@ -21,7 +21,7 @@ const renderPromptForGemini = async (
       role: "model",
       parts: [
         {
-          text: "You are a brwoser tab group classificator",
+          text: "You are a browser tab group classifier",
         },
       ],
     },
@@ -44,10 +44,9 @@ export const fetchGemini = async (
   apiKey: string,
   tabInfo: TabInfo,
   types: string[]
-) => {
+): Promise<string> => {
   const response = await fetch(
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" +
-      apiKey,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
     {
       method: "POST",
       headers: {
@@ -59,8 +58,15 @@ export const fetchGemini = async (
     }
   );
 
-  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+  }
 
-  const type: string = data.candidates[0].content.parts[0].text;
-  return type;
+  const data = await response.json();
+  const generatedText = data.candidates[0].content.parts[0].text.trim();
+
+  // Find the best matching type
+  const bestMatch = types.find(type => generatedText.toLowerCase().includes(type.toLowerCase())) || types[0];
+
+  return bestMatch;
 };
