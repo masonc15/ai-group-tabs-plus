@@ -35,9 +35,9 @@ export const fetchAnthropic = async (
 
   const response = await anthropic.messages.create({
     model: "claude-3-5-sonnet-20240620",
-    max_tokens: 1024,
+    max_tokens: 2048,
+    system: "You will be given information about multiple tabs. For each tab, classify it into one of the provided categories. Respond with a JSON array of category names, one for each tab in the order they were provided.",
     messages: [
-      { role: "system", content: "You will be given information about multiple tabs. For each tab, classify it into one of the provided categories. Respond with a JSON array of category names, one for each tab in the order they were provided." },
       { role: "user", content: JSON.stringify(messages) },
     ],
   });
@@ -46,7 +46,7 @@ export const fetchAnthropic = async (
   const classifiedTypes = JSON.parse(generatedText);
 
   // Ensure we have a valid type for each tab
-  return classifiedTypes.map((type: string) => 
+  return classifiedTypes.map((type: string) =>
     types.find(t => t.toLowerCase() === type.toLowerCase()) || types[0]
   );
 };
