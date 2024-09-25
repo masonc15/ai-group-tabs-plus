@@ -1,25 +1,6 @@
 import { Anthropic } from '@anthropic-ai/sdk';
 import { TabInfo } from "../types";
-import { getStorage, removeQueryParameters } from "../utils";
-import Mustache from "mustache";
-import { DEFAULT_PROMPT } from "../const";
-
-const renderPromptForAnthropic = async (
-  tab: TabInfo,
-  types: string[]
-): Promise<{ role: string; content: string }[]> => {
-  const prompt: string = (await getStorage("prompt")) || DEFAULT_PROMPT;
-  return [
-    {
-      role: "user",
-      content: Mustache.render(prompt, {
-        tabURL: removeQueryParameters(tab.url),
-        tabTitle: tab.title,
-        types: types.join(", "),
-      }),
-    },
-  ];
-};
+import { removeQueryParameters } from "../utils";
 
 export const fetchAnthropic = async (
   apiKey: string,
@@ -31,14 +12,23 @@ export const fetchAnthropic = async (
     dangerouslyAllowBrowser: true,
   });
 
-  const messages = await Promise.all(tabInfoList.map(tabInfo => renderPromptForAnthropic(tabInfo, types)));
+  const tabData = tabInfoList.map((tab, index) => ({
+    index: index + 1,
+    url: removeQueryParameters(tab.url),
+  }));
 
   const response = await anthropic.messages.create({
     model: "claude-3-5-sonnet-20240620",
     max_tokens: 2048,
     system: "You will be given information about multiple tabs. For each tab, classify it into one of the provided categories. Respond with a JSON array of category names, one for each tab in the order they were provided.",
     messages: [
-      { role: "user", content: JSON.stringify(messages) },
+      {
+        role: "user",
+        content: JSON.stringify({
+          tabs: tabData,
+          categories: types,
+        }),
+      },
     ],
   });
 
