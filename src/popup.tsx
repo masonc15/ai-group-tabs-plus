@@ -133,9 +133,7 @@ const Group = () => {
 };
 
 const Popup = () => {
-  const [serviceProvider, setServiceProvider] = useState<ServiceProvider>(
-    "GPT"
-  );
+  const [serviceProvider, setServiceProvider] = useState<ServiceProvider>("GPT");
   const [apiKey, setApiKey] = useState<string | undefined>("");
   const [types, setTypes] = useState<string[]>([]);
   const [isOn, setIsOn] = useState<boolean | undefined>(true);
@@ -235,16 +233,32 @@ const Popup = () => {
 
   return (
     <div className="p-6 pb-9 min-w-[24rem] ">
-      <div className="flex items-center mb-6 justify-between">
-        <h1 className="text-xl font-bold">AI Group Tab</h1>
-
-        <button
-          onClick={() => {
-            chrome.runtime.openOptionsPage();
-          }}
-        >
-          <img src="/cog.svg" alt="cog" className="w-6 h-6" />
-        </button>
+      <div className="flex flex-col gap-y-4 mb-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold">AI Group Tab</h1>
+          <button
+            onClick={() => {
+              chrome.runtime.openOptionsPage();
+            }}
+          >
+            <img src="/cog.svg" alt="cog" className="w-6 h-6" />
+          </button>
+        </div>
+        <div className="flex items-center gap-x-2">
+          <label htmlFor="serviceProvider" className="text-sm font-medium">Service Provider:</label>
+          <select
+            id="serviceProvider"
+            value={serviceProvider}
+            onChange={(e) => {
+              setServiceProvider(e.target.value as ServiceProvider);
+              setStorage("serviceProvider", e.target.value);
+            }}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2"
+          >
+            <option value="GPT">OpenAI GPT</option>
+            <option value="Gemini">Google Gemini</option>
+          </select>
+        </div>
       </div>
 
       <div className="relative mb-2">

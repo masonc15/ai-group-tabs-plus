@@ -22,6 +22,7 @@ function BasicSettings() {
   const [apiURL, setApiURL] = useState<string | undefined>(
     "https://api.openai.com/v1/chat/completions"
   );
+  const [geminiApiKey, setGeminiApiKey] = useState<string | undefined>("");
   const [filterRules, setFilterRules] = useState<FilterRuleItem[] | undefined>([
     { id: 0, type: "DOMAIN", rule: "" },
   ]);
@@ -34,6 +35,7 @@ function BasicSettings() {
     });
     getStorage<string>("apiURL").then(setApiURL);
     getStorage<FilterRuleItem[]>("filterRules").then(setFilterRules);
+    getStorage<string>("gemini_key").then(setGeminiApiKey);
   }, []);
 
   const updateModel = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
@@ -114,6 +116,24 @@ function BasicSettings() {
             />
           </div>
         </>
+      )}
+      {serviceProvider === "Gemini" && (
+        <div className="flex flex-col gap-y-2">
+          <label htmlFor="gemini_key" className="text-xl font-medium">
+            Gemini API Key
+          </label>
+          <input
+            className="bg-gray-50 border w-64 border-gray-300 text-gray-900 text-sm rounded-lg
+            focus:ring-blue-500 focus:border-blue-500 block"
+            type="password"
+            value={geminiApiKey}
+            onChange={(e) => {
+              setGeminiApiKey(e.target.value);
+              setStorage("gemini_key", e.target.value);
+            }}
+            id="gemini_key"
+          />
+        </div>
       )}
       <div className="flex flex-col gap-y-2">
         <label htmlFor="api_url" className="text-xl font-medium">

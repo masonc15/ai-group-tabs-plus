@@ -61,7 +61,8 @@ export async function handleOneTab(
   const shouldFilter = !filterTabInfo(tabInfo, filterRules);
   if (shouldFilter) return;
 
-  const type = await fetchType(apiKey, tabInfo, types);
+  const serviceProvider = await getStorage<ServiceProvider>("serviceProvider") || "GPT";
+  const type = await fetchType(apiKey, tabInfo, types, serviceProvider);
   return type;
 }
 
