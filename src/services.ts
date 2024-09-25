@@ -39,10 +39,13 @@ export async function batchGroupTabs(
     };
   });
 
+  const serviceProvider = await getStorage<ServiceProvider>("serviceProvider") || "GPT";
+  const actualApiKey = serviceProvider === "Gemini" ? await getStorage<string>("gemini_key") : apiKey;
+
   await Promise.all(
     tabInfoList.map(async (tabInfo) => {
       if (!tabInfo.url) return;
-      const type = await fetchType(apiKey, tabInfo, types);
+      const type = await fetchType(actualApiKey, tabInfo, types, serviceProvider);
       const index = types.indexOf(type);
       if (index === -1) return;
       result[index].tabIds.push(tabInfo.id);
@@ -61,8 +64,9 @@ export async function handleOneTab(
   const shouldFilter = !filterTabInfo(tabInfo, filterRules);
   if (shouldFilter) return;
 
-  const serviceProvider = await getStorage<ServiceProvider>("serviceProvider");
-  const type = await fetchType(apiKey, tabInfo, types, serviceProvider || "GPT");
+  const serviceProvider = await getStorage<ServiceProvider>("serviceProvider") || "GPT";
+  const actualApiKey = serviceProvider === "Gemini" ? await getStorage<string>("gemini_key") : apiKey;
+  const type = await fetchType(actualApiKey, tabInfo, types, serviceProvider);
   return type;
 }
 
