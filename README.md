@@ -1,12 +1,9 @@
-# AI Group Tabs
+# AI Group Tabs Plus
 
 NOTE: This is a fork with added Gemini and Anthropic API capability. Default model for Gemini is `gemini-1.5-pro-exp-0827` and default model for Anthropic is `claude-3-5-sonnet-20240620`.
 
 ![Frame 7](https://github.com/MichaelYuhe/ai-group-tabs/assets/63531512/fef62a35-8193-4ef1-8082-cfc771d0b4e6)
 
-Demo Video:
-
-> [![Watch the video](https://img.youtube.com/vi/SjfKiXy3zOc/default.jpg)](https://youtu.be/SjfKiXy3zOc)
 
 ## Roadmap
 
@@ -49,22 +46,3 @@ pnpm dev
 # Build
 pnpm build
 ```
-
-## Special Thanks
-
-> Everyone contributor can get your one month free of Developer Plan on Zeabur.
-
-[![Deployed on Zeabur](https://zeabur.com/deployed-on-zeabur-dark.svg)](https://zeabur.com?referralCode=MichaelYuhe&utm_source=ai-group-tab&utm_campaign=oss)
-
-## Sponsor
-
-> This extension is free forever, if you love this extension, you can buy me a coffee here :D
-
-<a href="https://www.buymeacoffee.com/MichaelYuhe" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
-
-## Contributors
-
-<p align="left">
-<a href="https://github.com/MichaelYuhe/ai-group-tabs/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=MichaelYuhe/ai-group-tabs" style="width: 60%"/>
-</a></p>
