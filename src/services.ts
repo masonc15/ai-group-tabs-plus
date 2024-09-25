@@ -17,22 +17,6 @@ const filterTabInfo = (tabInfo: TabInfo, filterRules: FilterRuleItem[]) => {
   });
 };
 
-export async function handleMultipleTabs(
-  tabs: chrome.tabs.Tab[],
-  types: string[],
-  apiKey: string
-) {
-  const filterRules = (await getStorage<FilterRuleItem[]>("filterRules")) || [];
-  const serviceProvider = await getStorage<ServiceProvider>("serviceProvider") || "GPT";
-  const actualApiKey = serviceProvider === "Gemini" ? await getStorage<string>("gemini_key") : apiKey;
-
-  const tabInfoList: TabInfo[] = tabs
-    .map((tab) => ({ id: tab.id, title: tab.title, url: tab.url }))
-    .filter((tabInfo) => filterTabInfo(tabInfo, filterRules));
-
-  const tabTypes = await fetchTypes(actualApiKey, tabInfoList, types, serviceProvider);
-  return tabTypes;
-}
 
 export async function batchGroupTabs(
   tabs: chrome.tabs.Tab[],
