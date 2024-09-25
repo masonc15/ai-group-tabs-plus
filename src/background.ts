@@ -154,10 +154,7 @@ async function createGroupWithTitle(tabId: number, title: string) {
   }
 }
 
-async function processTabAndGroup(tab: chrome.tabs.Tab, types: any) {
-  if (!tab.id || !tab.windowId) {
-    throw new Error("Tab ID or WindowID is undefined!");
-  }
+async function processTabsAndGroup(tabs: chrome.tabs.Tab[], types: any) {
   const serviceProvider = await getStorage<ServiceProvider>("serviceProvider") || "GPT";
   let apiKey: string | undefined;
   switch (serviceProvider) {
@@ -175,44 +172,51 @@ async function processTabAndGroup(tab: chrome.tabs.Tab, types: any) {
   }
   if (!apiKey) return;
 
-  const type = await handleOneTab(tab, types, apiKey);
-  if (!type) return;
-  // Get or create proper tabMap for the window
-  if (!windowGroupMaps.hasOwnProperty(tab.windowId)) {
-    windowGroupMaps[tab.windowId] = new Map();
-  }
-  const tabMap = windowGroupMaps[tab.windowId];
+  const tabTypes = await handleMultipleTabs(tabs, types, apiKey);
+  
+  for (let i = 0; i < tabs.length; i++) {
+    const tab = tabs[i];
+    const type = tabTypes[i];
+    
+    if (!tab.id || !tab.windowId || !type) continue;
 
-  // Query all groups and update tabMap accordingly
-  const allGroups = await chrome.tabGroups.query({});
-  allGroups.forEach(
-    (group) =>
-      group.windowId === tab.windowId &&
-      group.title &&
-      tabMap.set(group.title, group.id)
-  );
-
-  // Check if a group already exists for this type
-  const groupId = tabMap.get(type);
-
-  // If groupId is not undefined, it means a group with that type already exists
-  if (groupId !== undefined) {
-    // Existing group is valid, add tab to this group.
-    await chrome.tabs.group({ tabIds: tab.id, groupId });
-
-    const isAutoPosition = await getStorage<boolean>("isAutoPosition");
-
-    const currentWindowTabs = await chrome.tabs.query({
-      windowId: tab.windowId,
-    });
-    const isRightmost =
-      tab.index == Math.max(...currentWindowTabs.map((tab) => tab.index));
-    if (isAutoPosition && isRightmost) {
-      await chrome.tabGroups.move(groupId, { index: -1 });
+    // Get or create proper tabMap for the window
+    if (!windowGroupMaps.hasOwnProperty(tab.windowId)) {
+      windowGroupMaps[tab.windowId] = new Map();
     }
-  } else {
-    // If no valid group is found, create a new group for this type
-    await createGroupWithTitle(tab.id, type);
+    const tabMap = windowGroupMaps[tab.windowId];
+
+    // Query all groups and update tabMap accordingly
+    const allGroups = await chrome.tabGroups.query({});
+    allGroups.forEach(
+      (group) =>
+        group.windowId === tab.windowId &&
+        group.title &&
+        tabMap.set(group.title, group.id)
+    );
+
+    // Check if a group already exists for this type
+    const groupId = tabMap.get(type);
+
+    // If groupId is not undefined, it means a group with that type already exists
+    if (groupId !== undefined) {
+      // Existing group is valid, add tab to this group.
+      await chrome.tabs.group({ tabIds: tab.id, groupId });
+
+      const isAutoPosition = await getStorage<boolean>("isAutoPosition");
+
+      const currentWindowTabs = await chrome.tabs.query({
+        windowId: tab.windowId,
+      });
+      const isRightmost =
+        tab.index == Math.max(...currentWindowTabs.map((tab) => tab.index));
+      if (isAutoPosition && isRightmost) {
+        await chrome.tabGroups.move(groupId, { index: -1 });
+      }
+    } else {
+      // If no valid group is found, create a new group for this type
+      await createGroupWithTitle(tab.id, type);
+    }
   }
 }
 
@@ -233,7 +237,7 @@ async function handleNewTab(tab: chrome.tabs.Tab) {
 
   tabMap[tab.id] = tab;
 
-  await processTabAndGroup(tab, types);
+  await processTabsAndGroup([tab], types);
 }
 
 async function handleTabUpdate(
@@ -268,7 +272,7 @@ async function handleTabUpdate(
 
   tabMap[tab.id] = tab;
 
-  await processTabAndGroup(tab, types);
+  await processTabsAndGroup([tab], types);
 }
 
 chrome.tabs.onCreated.addListener(handleNewTab);

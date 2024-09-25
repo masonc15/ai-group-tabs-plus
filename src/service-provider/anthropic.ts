@@ -23,24 +23,30 @@ const renderPromptForAnthropic = async (
 
 export const fetchAnthropic = async (
   apiKey: string,
-  tabInfo: TabInfo,
+  tabInfoList: TabInfo[],
   types: string[]
-): Promise<string> => {
+): Promise<string[]> => {
   const anthropic = new Anthropic({
     apiKey: apiKey,
     dangerouslyAllowBrowser: true,
   });
 
+  const messages = await Promise.all(tabInfoList.map(tabInfo => renderPromptForAnthropic(tabInfo, types)));
+
   const response = await anthropic.messages.create({
     model: "claude-3-5-sonnet-20240620",
     max_tokens: 1024,
-    messages: await renderPromptForAnthropic(tabInfo, types),
+    messages: [
+      { role: "system", content: "You will be given information about multiple tabs. For each tab, classify it into one of the provided categories. Respond with a JSON array of category names, one for each tab in the order they were provided." },
+      { role: "user", content: JSON.stringify(messages) },
+    ],
   });
 
   const generatedText = response.content[0].text.trim();
+  const classifiedTypes = JSON.parse(generatedText);
 
-  // Find the best matching type
-  const bestMatch = types.find(type => generatedText.toLowerCase().includes(type.toLowerCase())) || types[0];
-
-  return bestMatch;
+  // Ensure we have a valid type for each tab
+  return classifiedTypes.map((type: string) => 
+    types.find(t => t.toLowerCase() === type.toLowerCase()) || types[0]
+  );
 };

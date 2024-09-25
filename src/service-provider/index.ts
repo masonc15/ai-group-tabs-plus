@@ -9,9 +9,9 @@ const fetchMap = {
   Anthropic: fetchAnthropic,
 } as const;
 
-export const fetchType = async (
+export const fetchTypes = async (
   apiKey: string,
-  tabInfo: TabInfo,
+  tabInfoList: TabInfo[],
   types: string[],
   serviceProvider: ServiceProvider = "GPT"
 ) => {
@@ -19,5 +19,5 @@ export const fetchType = async (
     console.warn(`Unexpected serviceProvider: ${serviceProvider}, falling back to GPT`);
     serviceProvider = "GPT";
   }
-  return fetchMap[serviceProvider](apiKey, tabInfo, types);
+  return fetchMap[serviceProvider](apiKey, tabInfoList, types);
 };
