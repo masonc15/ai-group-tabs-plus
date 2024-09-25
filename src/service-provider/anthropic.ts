@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { Anthropic } from '@anthropic-ai/sdk';
 import { TabInfo } from "../types";
 import { getStorage, removeQueryParameters } from "../utils";
 import Mustache from "mustache";
@@ -10,10 +10,6 @@ const renderPromptForAnthropic = async (
 ): Promise<{ role: string; content: string }[]> => {
   const prompt: string = (await getStorage("prompt")) || DEFAULT_PROMPT;
   return [
-    {
-      role: "system",
-      content: "You are a browser tab group classifier",
-    },
     {
       role: "user",
       content: Mustache.render(prompt, {
@@ -35,7 +31,7 @@ export const fetchAnthropic = async (
   });
 
   const response = await anthropic.messages.create({
-    model: "claude-3-5-sonnet-20240620",
+    model: "claude-3-sonnet-20240229",
     max_tokens: 1024,
     messages: await renderPromptForAnthropic(tabInfo, types),
   });
