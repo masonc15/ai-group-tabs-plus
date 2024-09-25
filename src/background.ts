@@ -159,7 +159,20 @@ async function processTabAndGroup(tab: chrome.tabs.Tab, types: any) {
     throw new Error("Tab ID or WindowID is undefined!");
   }
   const serviceProvider = await getStorage<ServiceProvider>("serviceProvider") || "GPT";
-  const apiKey = await getStorage<string>(serviceProvider === "GPT" ? "openai_key" : "gemini_key");
+  let apiKey: string | undefined;
+  switch (serviceProvider) {
+    case "GPT":
+      apiKey = await getStorage<string>("openai_key");
+      break;
+    case "Gemini":
+      apiKey = await getStorage<string>("gemini_key");
+      break;
+    case "Anthropic":
+      apiKey = await getStorage<string>("anthropic_key");
+      break;
+    default:
+      apiKey = await getStorage<string>("openai_key");
+  }
   if (!apiKey) return;
 
   const type = await handleOneTab(tab, types, apiKey);

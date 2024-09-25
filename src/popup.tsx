@@ -257,6 +257,7 @@ const Popup = () => {
           >
             <option value="GPT">OpenAI GPT</option>
             <option value="Gemini">Google Gemini</option>
+            <option value="Anthropic">Anthropic Claude</option>
           </select>
         </div>
       </div>

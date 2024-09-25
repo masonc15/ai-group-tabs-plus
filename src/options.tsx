@@ -77,6 +77,7 @@ function BasicSettings() {
         >
           <option value="GPT">OpenAI GPT</option>
           <option value="Gemini">Google Gemini</option>
+          <option value="Anthropic">Anthropic Claude</option>
         </select>
       </div>
 
@@ -132,6 +133,24 @@ function BasicSettings() {
               setStorage("gemini_key", e.target.value);
             }}
             id="gemini_key"
+          />
+        </div>
+      )}
+      {serviceProvider === "Anthropic" && (
+        <div className="flex flex-col gap-y-2">
+          <label htmlFor="anthropic_key" className="text-xl font-medium">
+            Anthropic API Key
+          </label>
+          <input
+            className="bg-gray-50 border w-64 border-gray-300 text-gray-900 text-sm rounded-lg
+            focus:ring-blue-500 focus:border-blue-500 block"
+            type="password"
+            value={anthropicApiKey}
+            onChange={(e) => {
+              setAnthropicApiKey(e.target.value);
+              setStorage("anthropic_key", e.target.value);
+            }}
+            id="anthropic_key"
           />
         </div>
       )}

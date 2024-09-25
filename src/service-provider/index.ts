@@ -1,10 +1,12 @@
 import { TabInfo, ServiceProvider } from "../types";
 import { fetchGemini } from "./gemini";
 import { fetchGpt } from "./gpt";
+import { fetchAnthropic } from "./anthropic";
 
 const fetchMap = {
   GPT: fetchGpt,
   Gemini: fetchGemini,
+  Anthropic: fetchAnthropic,
 } as const;
 
 export const fetchType = async (
