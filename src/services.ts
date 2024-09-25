@@ -108,18 +108,19 @@ export const validateApiKey = async (
         return false;
       }
     } else if (serviceProvider === "Anthropic") {
-      const anthropic = new Anthropic({
-        apiKey: apiKey,
-      });
       try {
+        const anthropic = new Anthropic({
+          apiKey: apiKey,
+        });
         await anthropic.messages.create({
-          model: "claude-3-5-sonnet-20240620",
+          model: "claude-3-sonnet-20240229",
           max_tokens: 1,
           messages: [{ role: "user", content: "ping" }],
         });
         toast.success("Valid Anthropic Key");
         return true;
       } catch (error) {
+        console.error("Anthropic API error:", error);
         if (error instanceof Error) {
           toast.error("Invalid Anthropic Key: " + error.message);
         } else {
