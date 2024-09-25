@@ -111,6 +111,7 @@ export const validateApiKey = async (
       try {
         const client = new Anthropic({
           apiKey: apiKey,
+          dangerouslyAllowBrowser: true,
         });
         await client.messages.create({
           max_tokens: 1024,
