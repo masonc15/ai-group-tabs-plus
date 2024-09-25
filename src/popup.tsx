@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { LoadingSpinner } from "./components/LoadingSpinner";
-import { batchGroupTabs, validateApiKey } from "./services";
+import { batchGroupTabs, validateApiKey, handleMultipleTabs } from "./services";
 import { getStorage, setStorage } from "./utils";
 import Input from "./components/Input";
 import Switch from "./components/Switch";
