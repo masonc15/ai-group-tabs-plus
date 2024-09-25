@@ -141,6 +141,18 @@ export const removeQueryParameters = (
     return "about:blank";
   }
   const url = new URL(urlString);
-  url.search = "";
+  const params = new URLSearchParams(url.search);
+  const importantParams = ['q', 'query', 'search', 'id', 'v'];
+  
+  // Create a new URLSearchParams object with only important parameters
+  const filteredParams = new URLSearchParams();
+  importantParams.forEach(param => {
+    if (params.has(param)) {
+      filteredParams.set(param, params.get(param)!);
+    }
+  });
+  
+  // Set the filtered search string
+  url.search = filteredParams.toString();
   return url.toString();
 };
