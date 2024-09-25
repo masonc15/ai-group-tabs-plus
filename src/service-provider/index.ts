@@ -11,10 +11,11 @@ export const fetchType = async (
   apiKey: string,
   tabInfo: TabInfo,
   types: string[],
-  serviceProvider: ServiceProvider
+  serviceProvider: ServiceProvider = "GPT"
 ) => {
   if (!fetchMap[serviceProvider]) {
-    throw new Error("unexpected serviceProvider: " + serviceProvider);
+    console.warn(`Unexpected serviceProvider: ${serviceProvider}, falling back to GPT`);
+    serviceProvider = "GPT";
   }
   return fetchMap[serviceProvider](apiKey, tabInfo, types);
 };
