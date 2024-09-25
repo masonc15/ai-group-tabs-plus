@@ -2,7 +2,7 @@ import { getStorage, matchesRule } from "./utils";
 import { FilterRuleItem, ServiceProvider, TabInfo } from "./types";
 import { fetchType } from "./service-provider";
 import { toast } from "./components/toast";
-import Anthropic from '@anthropic-ai/sdk';
+import { Anthropic } from '@anthropic-ai/sdk';
 
 interface TabGroup {
   type: string;
