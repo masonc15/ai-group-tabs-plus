@@ -23,6 +23,7 @@ function BasicSettings() {
     "https://api.openai.com/v1/chat/completions"
   );
   const [geminiApiKey, setGeminiApiKey] = useState<string | undefined>("");
+  const [anthropicApiKey, setAnthropicApiKey] = useState<string | undefined>("");
   const [filterRules, setFilterRules] = useState<FilterRuleItem[] | undefined>([
     { id: 0, type: "DOMAIN", rule: "" },
   ]);
@@ -36,6 +37,7 @@ function BasicSettings() {
     getStorage<string>("apiURL").then(setApiURL);
     getStorage<FilterRuleItem[]>("filterRules").then(setFilterRules);
     getStorage<string>("gemini_key").then(setGeminiApiKey);
+    getStorage<string>("anthropic_key").then(setAnthropicApiKey);
   }, []);
 
   const updateModel = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
