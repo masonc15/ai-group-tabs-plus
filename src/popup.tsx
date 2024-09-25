@@ -178,7 +178,11 @@ const Popup = () => {
     try {
       setIsLoading(true);
       const tabs = await chrome.tabs.query({ currentWindow: true });
-      const result = await batchGroupTabs(tabs, types, apiKey);
+      const tabTypes = await handleMultipleTabs(tabs, types, apiKey);
+      const result = types.map((type, index) => ({
+        type,
+        tabIds: tabs.filter((_, i) => tabTypes[i] === type).map(tab => tab.id).filter((id): id is number => id !== undefined)
+      }));
       chrome.runtime.sendMessage({ result });
     } catch (error) {
       console.error(error);
